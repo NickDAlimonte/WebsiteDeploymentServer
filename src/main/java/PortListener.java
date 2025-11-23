@@ -57,7 +57,6 @@ public class PortListener {
                     }
                     else{
                         System.out.println("Server received deployment request with invalid deployment key");
-                        System.out.println(deployKey);
                         os.write(responseFailed.getBytes());
                         os.flush();
                     }
