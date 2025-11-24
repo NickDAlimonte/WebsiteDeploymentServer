@@ -1,19 +1,15 @@
 @echo off
-echo ==================================
 echo        Deploying Website
-echo ==================================
 
-set "REPO=C:\Users\Nick\Desktop\RealProjects\Nicksproject.ca"
+set "REPO=C:\Users\Nick\Desktop\RealProjects\dev\Nicksproject.ca"
 set "DEST=C:\inetpub\wwwroot"
 
-echo Pulling latest from GitHub...
+echo Pulling from github
 cd /d "%REPO%"
 git pull
 
-echo Syncing files to wwwroot...
+echo Syncing files to wwwroot
 robocopy "%REPO%" "%DEST%" /MIR /R:0 /W:0 /XD ".git" /XF ".gitignore"
 
-echo ==================================
 echo        Deployment Complete!
-echo ==================================
 pause
