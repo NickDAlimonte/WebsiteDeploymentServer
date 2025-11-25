@@ -1,3 +1,5 @@
+package Server;
+
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
@@ -6,6 +8,7 @@ import java.util.concurrent.Executors;
 
 public abstract class PortListener {
     private final int port;
+
     private final ExecutorService executor =Executors.newFixedThreadPool(4);
 
 
@@ -16,10 +19,12 @@ public abstract class PortListener {
 
     public void listener() {
 
-        try (ServerSocket serverSocket = new ServerSocket(port)) {
+
+        try {
+            this.serverSocket = new ServerSocket(port);
             System.out.println("Server listening on port: " + port);
 
-            while (true) {
+            while (running) {
                 Socket socket = serverSocket.accept();
                 System.out.println("Accepted connection from: " + socket.getInetAddress().getHostName());
                 executor.submit(() -> {
@@ -38,4 +43,20 @@ public abstract class PortListener {
     }
 
     public abstract void handleClient(Socket socket) throws IOException;
+
+    private volatile boolean running = true;
+    private ServerSocket serverSocket;
+
+
+    public void stop(){
+        running = false;
+
+        try{
+            if(this.serverSocket != null && !this.serverSocket.isClosed()){
+                this.serverSocket.close();
+            }
+        }catch(IOException ignored){}
+
+        executor.shutdown();
+    }
 }

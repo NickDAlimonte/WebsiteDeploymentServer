@@ -1,14 +1,15 @@
+package Server;
+
 public class ListenerThread implements Runnable {
 
-    DeploymentListener listener;
+    PortListener listener;
 
-    public ListenerThread(DeploymentListener listener){
+    public ListenerThread(PortListener listener){
         this.listener = listener;
     }
 
     @Override
     public void run(){
         this.listener.listener();
-        System.out.println("New Thread created");
     }
 }

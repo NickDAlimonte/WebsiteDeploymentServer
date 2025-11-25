@@ -1,11 +1,13 @@
+package Server;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.net.Socket;
-import java.sql.SQLOutput;
 
-public class DeploymentListener extends PortListener{
+public class DeploymentListener extends PortListener {
+
 
     public DeploymentListener(){
         super(24001);
@@ -31,6 +33,7 @@ public class DeploymentListener extends PortListener{
 
 
         public void handleClient(Socket socket) throws IOException {
+
             BufferedReader br = new BufferedReader(new InputStreamReader(socket.getInputStream()));
             OutputStream os = socket.getOutputStream();
 
@@ -38,6 +41,11 @@ public class DeploymentListener extends PortListener{
 
 
             try{
+                if (deploymentKey == null || !deploymentKey.startsWith("GET /?key=")){
+                    os.write(responseFailed.getBytes());
+                    return;
+                }
+
                 if (deploymentKey.toLowerCase().contains("key=")) {
                     if (deploymentKey.split("key=")[1].split(" HTTP")[0].equals(deployKey)) {
                         deployServer();
@@ -60,9 +68,9 @@ public class DeploymentListener extends PortListener{
         ProcessBuilder processBuilder = new ProcessBuilder("schtasks", "/run", "/tn", "WebsiteDeployment");
         try {
             processBuilder.start();
-            System.out.println(" started");
+            System.out.println("\nstarted");
         }catch (Exception e){
-            System.out.println("Error starting deployment");
+            System.out.println("\nError starting deployment");
         }
 
     }
