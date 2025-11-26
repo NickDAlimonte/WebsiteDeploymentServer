@@ -20,8 +20,19 @@ public class AuthListener extends PortListener{
         BufferedReader br = new BufferedReader(new InputStreamReader(socket.getInputStream()));
         OutputStream os = socket.getOutputStream();
 
+        int contentLength = 0;
+        String currentLine;
+
+        while((currentLine = br.readLine()) != null){
+            if(currentLine.contains("Content-Length:")){
+                contentLength = Integer.parseInt(currentLine.split(":")[1].trim());
+            }
+        }
+
+        System.out.println(contentLength);
 
 
 
     }
+
 }
