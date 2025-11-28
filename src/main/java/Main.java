@@ -1,3 +1,5 @@
+import Database.AccountCreator;
+import Database.DBConnector;
 import Server.AuthListener;
 import Server.DeploymentListener;
 import Server.ListenerThread;
@@ -15,6 +17,8 @@ public class Main {
         Thread deployThread = new Thread(deploymentThread);
         deployThread.start();
         authenticationThread.start();
+
+        AccountCreator.CreateAccount("N3i1c9k5", "Nick1995", "Nickolas.Dalimonte@gmail.com");
 
 
         Runtime.getRuntime().addShutdownHook(new Thread(() -> {

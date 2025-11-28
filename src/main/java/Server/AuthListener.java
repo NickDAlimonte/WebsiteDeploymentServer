@@ -1,36 +1,41 @@
 package Server;
+//Listens on port 24002 for the Username and password or Username & email field to determine whether to create an account or login.
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.OutputStream;
+//Bad logic for determining login/creation conditions (maybe use a different listener & port for creation/login???)
+//Potentially doesn't read the entire message if it's longer than 1024 bytes. Not sure if this is a problem?
+
+import java.io.*;
 import java.net.Socket;
+import java.nio.charset.StandardCharsets;
 
 public class AuthListener extends PortListener{
 
     public AuthListener() {
         super(24002);
     }
+    String password = "Password";
+    String username = "Username";
 
 
     @Override
     public void handleClient(Socket socket) throws IOException {
         System.out.println("Message Received on Port: "+socket.getLocalPort());
 
-        BufferedReader br = new BufferedReader(new InputStreamReader(socket.getInputStream()));
-        OutputStream os = socket.getOutputStream();
+        InputStream is = socket.getInputStream();
 
-        int contentLength = 0;
-        String currentLine;
+        byte[] b = new byte[1024];
 
-        while((currentLine = br.readLine()) != null){
-            if(currentLine.contains("Content-Length:")){
-                contentLength = Integer.parseInt(currentLine.split(":")[1].trim());
-            }
+        String message = new String(b, 0, is.read(b), StandardCharsets.UTF_8);
+
+        if(message.contains("uName") && message.contains("email")){
+            //create account
+            System.out.println("Account created");
+
         }
 
-        System.out.println(contentLength);
-
+        else if(message.contains(username) && message.contains(password)){
+            System.out.println("Logged in");
+        }
 
 
     }
