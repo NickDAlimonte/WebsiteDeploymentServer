@@ -18,8 +18,6 @@ public class Main {
         deployThread.start();
         authenticationThread.start();
 
-        AccountCreator.CreateAccount("N3i1c9k5", "Nick1995", "Nickolas.Dalimonte@gmail.com");
-
 
         Runtime.getRuntime().addShutdownHook(new Thread(() -> {
             System.out.println("Shutting down");
