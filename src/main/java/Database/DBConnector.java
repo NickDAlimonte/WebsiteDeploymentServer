@@ -15,8 +15,8 @@ public class DBConnector {
     public static Connection getConnection(){
         try{
             return DriverManager.getConnection(url, user, password);
-            } catch(SQLException e){
-                throw new RuntimeException("Database Connection Failed: " + e.getMessage());
+        } catch(SQLException e){
+            throw new RuntimeException("Database Connection Failed: " + e.getMessage());
         }
     }
 }

@@ -32,35 +32,35 @@ public class DeploymentListener extends PortListener {
     String deployKey = System.getenv("DEPLOY_KEY");
 
 
-        public void handleClient(Socket socket) throws IOException {
+    public void handleClient(Socket socket) throws IOException {
 
-            BufferedReader br = new BufferedReader(new InputStreamReader(socket.getInputStream()));
-            OutputStream os = socket.getOutputStream();
+        BufferedReader br = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+        OutputStream os = socket.getOutputStream();
 
-            String deploymentKey = br.readLine();
+        String deploymentKey = firstLine;
 
 
-            try{
-                if (deploymentKey == null || !deploymentKey.startsWith("GET /?key=")){
-                    os.write(responseFailed.getBytes());
-                    return;
-                }
-
-                if (deploymentKey.toLowerCase().contains("key=")) {
-                    if (deploymentKey.split("key=")[1].split(" HTTP")[0].equals(deployKey)) {
-                        deployServer();
-                        os.write(responseSuccessful.getBytes());
-                        System.out.println("Deployment successful");
-                    }
-                }
-                else {
-                    os.write(responseFailed.getBytes());
-                    System.out.println("Deployment Failed");
-                }
-                }catch(Exception e){
-                System.out.println("Error: "+e.getMessage());
+        try{
+            if (deploymentKey == null || !deploymentKey.startsWith("GET /?key=")){
+                os.write(responseFailed.getBytes());
+                return;
             }
+
+            if (deploymentKey.toLowerCase().contains("key=")) {
+                if (deploymentKey.split("key=")[1].split(" HTTP")[0].equals(deployKey)) {
+                    deployServer();
+                    os.write(responseSuccessful.getBytes());
+                    System.out.println("Deployment successful");
+                }
+            }
+            else {
+                os.write(responseFailed.getBytes());
+                System.out.println("Deployment Failed");
+            }
+        }catch(Exception e){
+            System.out.println("Error: "+e.getMessage());
         }
+    }
 
 
 
