@@ -1,9 +1,6 @@
 package Server;
 
-import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.concurrent.ExecutorService;
@@ -32,12 +29,12 @@ public abstract class PortListener {
             while (running) {
                 Socket socket = serverSocket.accept();
 
-                BufferedReader br = new BufferedReader(new InputStreamReader(socket.getInputStream()));
-                firstLine = br.readLine();
-                if(firstLine.toLowerCase().contains("favicon")){
-                    System.out.println("Ignoring favicon request");
-                    socket.close();
-                }
+//                BufferedReader br = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+//                firstLine = br.readLine();
+//                if(firstLine.toLowerCase().contains("favicon")){
+//                    System.out.println("Ignoring favicon request");
+//                    socket.close();
+//                }
 
 
                 System.out.println("Accepted connection from: " + socket.getInetAddress().getHostName());

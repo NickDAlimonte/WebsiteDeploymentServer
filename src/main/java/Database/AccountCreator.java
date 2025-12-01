@@ -1,6 +1,5 @@
 package Database;
 import java.sql.Connection;
-import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 
@@ -9,7 +8,7 @@ public class AccountCreator {
 
     public static void CreateAccount(String username, String password, String email){
 
-        String sql = "INSERT INTO Users (username, password_hash, email) VALUES (?, ?, ?) ";
+        String sql = "INSERT INTO users (username, password_hash, email) VALUES (?, ?, ?) ";
 
 
         try{

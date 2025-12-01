@@ -82,17 +82,14 @@ public class AuthListener extends PortListener{
         }
 
 
-        if(accountInfo.containsKey("email") && accountInfo.containsKey("uName")){
-            AccountCreator.CreateAccount(accountInfo.get("uName"), accountInfo.get("hashedPSW"), accountInfo.get("email"));
-        }
-
         String hashedPSW = hashPassword(accountInfo.get("psw"));
         accountInfo.remove("psw");
 
         accountInfo.put("hashedPSW",  hashedPSW);
 
-
-        AccountCreator.CreateAccount(accountInfo.get("uName"), accountInfo.get("hashedPSW"), accountInfo.get("email"));
+        if(accountInfo.containsKey("email") && accountInfo.containsKey("uName")){
+            AccountCreator.CreateAccount(accountInfo.get("uName"), accountInfo.get("hashedPSW"), accountInfo.get("email"));
+        }
     }
 
     public static String hashPassword(String rawPassword){

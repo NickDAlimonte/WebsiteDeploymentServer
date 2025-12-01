@@ -1,4 +1,5 @@
 package Database;
+
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
@@ -8,9 +9,11 @@ import java.sql.SQLException;
 //DB package & DB Connection Class & Create Account Class & get Account class???
 
 public class DBConnector {
-    static String url =  "jdbc:mysql://localhost:3306/nicksprojectdb";
-    static String user = "root";
-    static String password = "N3i1c9k5";
+
+    static String url =  "jdbc:mysql://mysql-249f2790-nicksproject.k.aivencloud.com:19286/NicksProjectDB?ssl-mode=REQUIRED";
+    static String user = "avnadmin";
+    static String password = System.getenv("DB_Password");
+
 
     public static Connection getConnection(){
         try{
