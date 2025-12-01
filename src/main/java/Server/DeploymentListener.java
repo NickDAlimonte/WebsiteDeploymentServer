@@ -37,7 +37,8 @@ public class DeploymentListener extends PortListener {
         BufferedReader br = new BufferedReader(new InputStreamReader(socket.getInputStream()));
         OutputStream os = socket.getOutputStream();
 
-        String deploymentKey = firstLine;
+        String deploymentKey = br.readLine();
+        System.out.println(deploymentKey);
 
 
         try{
