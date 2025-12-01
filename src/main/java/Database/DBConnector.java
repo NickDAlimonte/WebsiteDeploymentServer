@@ -10,11 +10,13 @@ import java.sql.SQLException;
 
 public class DBConnector {
 
+    //aiven host,user,pass
     static String url =  "jdbc:mysql://mysql-249f2790-nicksproject.k.aivencloud.com:19286/NicksProjectDB?ssl-mode=REQUIRED";
     static String user = "avnadmin";
     static String password = System.getenv("DB_Password");
 
 
+    //Create Connection to database
     public static Connection getConnection(){
         try{
             return DriverManager.getConnection(url, user, password);

@@ -8,6 +8,11 @@ public class AccountCreator {
 
     public static void CreateAccount(String username, String password, String email){
 
+        if(username.contains("@")){
+            System.out.println("Invalid username. Cannot contain @");
+            return;
+        }
+
         String sql = "INSERT INTO users (username, password_hash, email) VALUES (?, ?, ?) ";
 
 

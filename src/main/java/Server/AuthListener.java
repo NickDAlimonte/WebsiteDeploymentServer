@@ -2,7 +2,6 @@ package Server;
 //Listens on port 24002 for the Username and password or Username & email field to determine whether to create an account or login.
 
 //Bad logic for determining login/creation conditions (maybe use a different listener & port for creation/login???)
-//Potentially doesn't read the entire message if it's longer than 1024 bytes. Not sure if this is a problem?
 
 
 import java.io.*;
@@ -12,6 +11,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 
 import Database.AccountCreator;
+import Database.accountAuthenticator;
 import de.mkammerer.argon2.Argon2;
 import de.mkammerer.argon2.Argon2Factory;
 
@@ -38,6 +38,7 @@ public class AuthListener extends PortListener{
                         "\r\n";
         System.out.println("Message Received on Port: "+socket.getLocalPort());
 
+        //Scanning post request for content length
         while((contentLine = br.readLine()) != null && !contentLine.isEmpty()){
 
             if(contentLine.toLowerCase().startsWith("content-length:")){
@@ -59,6 +60,8 @@ public class AuthListener extends PortListener{
             }
         }
 
+        //reading from POST request. Stopping exactly at the end
+
         char[] bodyChars = new char[contentLength];
         br.read(bodyChars, 0, contentLength);
 
@@ -70,6 +73,7 @@ public class AuthListener extends PortListener{
 
 
 
+        //creating hashmap from KV in the input forms
         for(String pair : pairs){
             if(!pair.contains("=")){continue;}
 
@@ -82,16 +86,33 @@ public class AuthListener extends PortListener{
         }
 
 
+        //retrieving raw password for hashing && removing former value for password
         String hashedPSW = hashPassword(accountInfo.get("psw"));
         accountInfo.remove("psw");
 
+        //placing hashed psw in the hashmap
         accountInfo.put("hashedPSW",  hashedPSW);
 
+
+        //should separate this into different methods, potentially a new class??
+        //Check whether the account is intended for creation or login
         if(accountInfo.containsKey("email") && accountInfo.containsKey("uName")){
             AccountCreator.CreateAccount(accountInfo.get("uName"), accountInfo.get("hashedPSW"), accountInfo.get("email"));
         }
+        else{
+            if(accountInfo.containsKey("uName")){
+            //Authenticating the user by username
+                accountAuthenticator.authenticateUser(accountInfo.get("uName"), accountInfo.get("psw"));
+            }
+            //Authenticating by email
+            else if(accountInfo.containsKey("email")){
+                accountAuthenticator.authenticateUser(accountInfo.get("email"), accountInfo.get("psw"));
+            }
+
+        }
     }
 
+    //hashing the password
     public static String hashPassword(String rawPassword){
         Argon2 argon2 = Argon2Factory.create(Argon2Factory.Argon2Types.ARGON2id);
 

@@ -11,12 +11,14 @@ public class Main {
         ListenerThread authThread = new ListenerThread(auth);
 
 
+        //Thread creation and deployment
         Thread authenticationThread = new Thread(authThread);
         Thread deployThread = new Thread(deploymentThread);
         deployThread.start();
         authenticationThread.start();
 
 
+        //Graceful shutdown
         Runtime.getRuntime().addShutdownHook(new Thread(() -> {
             System.out.println("Shutting down");
             deployment.stop();
