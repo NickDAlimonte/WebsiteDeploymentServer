@@ -3,7 +3,8 @@ package Server;
 
 //Bad logic for determining login/creation conditions (maybe use a different listener & port for creation/login???)
 
-
+//requires native access to run from JAR
+//java --enable-native-access=ALL-UNNAMED -jar .\WebsiteDeploymentServer.jar
 import java.io.*;
 import java.net.Socket;
 import java.net.URLDecoder;
@@ -38,8 +39,11 @@ public class AuthListener extends PortListener{
                         "\r\n";
         System.out.println("Message Received on Port: "+socket.getLocalPort());
 
+
+
         //Scanning post request for content length
         while((contentLine = br.readLine()) != null && !contentLine.isEmpty()){
+
 
             if(contentLine.toLowerCase().startsWith("content-length:")){
                 String header = contentLine.trim().split(":")[1].trim();
@@ -85,19 +89,22 @@ public class AuthListener extends PortListener{
             accountInfo.put(key, value);
         }
 
+        try {
+            //retrieving raw password for hashing && removing former value for password
+            String hashedPSW = hashPassword(accountInfo.get("psw"));
+            accountInfo.remove("psw");
 
-        //retrieving raw password for hashing && removing former value for password
-        String hashedPSW = hashPassword(accountInfo.get("psw"));
-        accountInfo.remove("psw");
-
-        //placing hashed psw in the hashmap
-        accountInfo.put("hashedPSW",  hashedPSW);
-
+            //placing hashed psw in the hashmap
+            accountInfo.put("hashedPSW", hashedPSW);
+        } catch(Exception e){
+            System.out.println("Argon 2 hashing failed");
+        }
 
         //should separate this into different methods, potentially a new class??
         //Check whether the account is intended for creation or login
         if(accountInfo.containsKey("email") && accountInfo.containsKey("uName")){
             AccountCreator.CreateAccount(accountInfo.get("uName"), accountInfo.get("hashedPSW"), accountInfo.get("email"));
+
         }
         else{
             if(accountInfo.containsKey("uName")){
