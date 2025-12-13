@@ -31,12 +31,6 @@ public class AuthListener extends PortListener{
         BufferedReader br =  new BufferedReader(new InputStreamReader(is));
         int contentLength = 0;
         String contentLine;
-        String response =
-                "HTTP/1.1 303 See Other\r\n" +
-                        "Location: https://Nicksproject.ca\r\n" +
-                        "Content-Length: 0\r\n" +
-                        "Connection: close\r\n" +
-                        "\r\n";
         System.out.println("Message Received on Port: "+socket.getLocalPort());
 
 
@@ -70,7 +64,6 @@ public class AuthListener extends PortListener{
         br.read(bodyChars, 0, contentLength);
 
         String body = new String(bodyChars);
-        os.write(response.getBytes(StandardCharsets.UTF_8));
 
         String[] pairs = body.split("&");
         HashMap<String, String> accountInfo = new HashMap<>();
@@ -89,34 +82,31 @@ public class AuthListener extends PortListener{
             accountInfo.put(key, value);
         }
 
-        try {
-            //retrieving raw password for hashing && removing former value for password
-            String hashedPSW = hashPassword(accountInfo.get("psw"));
-            accountInfo.remove("psw");
 
-            //placing hashed psw in the hashmap
-            accountInfo.put("hashedPSW", hashedPSW);
-        } catch(Exception e){
-            System.out.println("Argon 2 hashing failed");
-        }
 
-        //should separate this into different methods, potentially a new class??
         //Check whether the account is intended for creation or login
         if(accountInfo.containsKey("email") && accountInfo.containsKey("uName")){
+
+            //hashing password
+            try {
+                String hashedPSW = hashPassword(accountInfo.get("psw"));
+                accountInfo.remove("psw");
+
+                accountInfo.put("hashedPSW", hashedPSW);
+            } catch(Exception e){
+                System.out.println("Argon 2 hashing failed");
+            }
+
             AccountCreator.CreateAccount(accountInfo.get("uName"), accountInfo.get("hashedPSW"), accountInfo.get("email"));
 
         }
         else{
-            if(accountInfo.containsKey("uName")){
             //Authenticating the user by username
-                accountAuthenticator.authenticateUser(accountInfo.get("uName"), accountInfo.get("psw"));
-            }
-            //Authenticating by email
-            else if(accountInfo.containsKey("email")){
-                accountAuthenticator.authenticateUser(accountInfo.get("email"), accountInfo.get("psw"));
-            }
+                accountAuthenticator.authenticateUser(accountInfo.get("uName"), accountInfo.get("psw"), os);
 
         }
+
+        socket.close();
     }
 
     //hashing the password
