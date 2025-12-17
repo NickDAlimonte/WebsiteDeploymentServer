@@ -61,9 +61,17 @@ public class AuthListener extends PortListener{
         //reading from POST request. Stopping exactly at the end
 
         char[] bodyChars = new char[contentLength];
-        br.read(bodyChars, 0, contentLength);
+        int totalRead = 0;
+        while(totalRead < contentLength){
+            int read = br.read(bodyChars, totalRead, contentLength - totalRead);
+            if(read == -1){
+                break;
+            }
+            totalRead += read;
+        }
 
-        String body = new String(bodyChars);
+        String body = new String(bodyChars, 0, totalRead);
+        System.out.println(body);
 
         String[] pairs = body.split("&");
         HashMap<String, String> accountInfo = new HashMap<>();

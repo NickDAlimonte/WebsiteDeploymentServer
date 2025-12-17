@@ -16,6 +16,10 @@ import de.mkammerer.argon2.Argon2Factory;
 public class accountAuthenticator {
 
     public static int authenticateUser(String username, String password, OutputStream os){
+        if(username == null || password == null){
+            System.out.println("Error: Username and password are null.");
+            return -1;
+        }
 
         Argon2 argon2 = Argon2Factory.create(
                 Argon2Factory.Argon2Types.ARGON2id);
@@ -45,7 +49,9 @@ public class accountAuthenticator {
             ResultSet rs = stmt.getResultSet();
 
             String hashedPSW;
-            rs.next();
+            if(rs.next()){
+                System.out.println("Login Failed: User not found");
+            }
 
             hashedPSW = rs.getString(2);
 
@@ -79,7 +85,7 @@ public class accountAuthenticator {
                 String cookieHeader = "Set-Cookie: session_token=" + token + "; HttpOnly" + "; Secure" + "; Path=/" + "; Domain=.nicksproject.ca" + "; Max-Age=43200" +"; SameSite=None";
 
                 String loginSuccessful = "HTTP/1.1 303 See Other\r\n" +
-                        "Location: https://Nicksproject.ca\r\n" +
+                        "Location: https://Nicksproject.ca/UserAccount/UserProfile.php\r\n" +
                         cookieHeader+"\r\n" +
                         "\r\n";
 
